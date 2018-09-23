@@ -14,14 +14,19 @@ from keras.datasets import mnist
 from keras import Sequential, optimizers
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
+from keras.utils import to_categorical
 import os
 import psutil
 import time
 import datetime
 import numpy as np
+import matplotlib.pyplot as plt
+import scipy
+from PIL import Image
+from scipy import ndimage
+from HelperFunctionsDeepLearning2 import *
 
-
-batch_size = 128
+batch_size = 20
 num_classes = 2
 epochs = 12
 
@@ -40,6 +45,9 @@ x_test = x_test.reshape(x_test.shape[0], img_rows, img_cols, 3)
 x_train = x_train.astype('float32')
 x_test = x_test.astype('float32')
 
+y_train = y_train.T
+y_test = y_test.T
+
 
 
 input_shape = (img_rows, img_cols, 3)
@@ -52,8 +60,8 @@ x_test /= 255
 
 #
 #
-y_train = keras.utils.to_categorical(y_train, num_classes)
-y_test = keras.utils.to_categorical(y_test, num_classes)
+y_train = to_categorical(y_train, num_classes)
+y_test =to_categorical(y_test, num_classes)
 
 
 
@@ -112,10 +120,19 @@ print("Test Accuracy", acc)
 predicted_classes = model.predict_classes(x_test)
  
  # see which we predicted correctly and which not
-correct_indices = np.nonzero(predicted_classes == y_test)[0]
-incorrect_indices = np.nonzero(predicted_classes != y_test)[0]
+correct_indices = np.nonzero(predicted_classes == y_test[:,1])[0]
+incorrect_indices = np.nonzero(predicted_classes == y_test[:,0])[0]
 
 print(len(correct_indices)," classified correctly")
 print(len(incorrect_indices)," classified incorrectly")
  
+print("Test Accuracy : " + str(int(100 * len(correct_indices)/(len(correct_indices) + len(incorrect_indices)))) + " %")
+num_images = x_test.shape[0]
+plt.rcParams['figure.figsize'] = (100.0, 100.0) # set default size of plots
+for i in range(0, x_test.shape[0]):
+    resImage =x_test[i]
+    plt.subplot(2,num_images,i+1)
+    plt.imshow(resImage, interpolation='nearest')
+    plt.axis('off')
+    plt.title("Cat" if model.predict_classes(x_test[i].reshape(1,img_rows,img_cols,3)) == 1 else "Non Cat")
 
