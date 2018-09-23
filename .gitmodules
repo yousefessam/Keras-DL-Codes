@@ -1,0 +1,3 @@
+[submodule "Benchmarking-Deep-Learning-Frameworks"]
+	path = Benchmarking-Deep-Learning-Frameworks
+	url = https://github.com/DataSystemsGroupUT/Benchmarking-Deep-Learning-Frameworks.git
